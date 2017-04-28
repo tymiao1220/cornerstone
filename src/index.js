@@ -10,12 +10,14 @@ export {
   storedColorPixelDataToCanvasImageData
 } from './internal/storedColorPixelDataToCanvasImageData.js';
 
+export { internal } from './internal/index.js';
+
 // Rendering
 export { renderColorImage } from './rendering/renderColorImage.js';
 export { renderGrayscaleImage } from './rendering/renderGrayscaleImage.js';
 export { renderWebImage } from './rendering/renderWebImage.js';
 
-export { addEventListener, dispatchEvent } from './addEventListener.js';
+export { addEventListener, removeEventListener, dispatchEvent } from './addEventListener.js';
 export { canvasToPixel } from './canvasToPixel.js';
 export { disable } from './disable.js';
 export { displayImage } from './displayImage.js';

@@ -51,12 +51,12 @@ function purgeCacheIfNecessary () {
 
     removeImagePromise(imageId);
 
-    dispatchEvent('CornerstoneimageCacheDictPromiseRemoved', { imageId });
+    dispatchEvent('CornerstoneImageCachePromiseRemoved', { imageId });
   }
 
   const cacheInfo = getCacheInfo();
 
-  dispatchEvent('CornerstoneimageCacheDictFull', cacheInfo);
+  dispatchEvent('CornerstoneImageCacheFull', cacheInfo);
 }
 
 export function putImagePromise (imageId, imagePromise) {
@@ -109,7 +109,7 @@ export function getImagePromise (imageId) {
   const cachedImage = imageCacheDict[imageId];
 
   if (cachedImage === undefined) {
-    return undefined;
+    return;
   }
 
     // Bump time stamp for cached image
