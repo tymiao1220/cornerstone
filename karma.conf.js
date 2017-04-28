@@ -12,7 +12,7 @@ module.exports = function(config) {
     singleRun: true,
     browsers: ['PhantomJS'],
     frameworks: ['mocha'],
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage'],
     files: [
       'test/*_test.js',
       'test/**/*_test.js'

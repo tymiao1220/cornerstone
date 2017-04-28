@@ -8,10 +8,10 @@
  * @param enabledElement
  * @param invalidated - true if pixel data has been invalidated and cached rendering should not be used
  */
-export function drawImage(enabledElement, invalidated) {
-    enabledElement.needsRedraw = true;
-    if (invalidated){
-        enabledElement.invalid = true;
-    }
+export function drawImage (enabledElement, invalidated) {
+  enabledElement.needsRedraw = true;
+  if (invalidated) {
+    enabledElement.invalid = true;
+  }
 
 }

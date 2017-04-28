@@ -9,14 +9,14 @@ import { getModalityLUT } from './internal/modalityLUT.js';
 /**
  * Returns array of pixels with modality LUT transformation applied
  */
-export function getPixels(element, x, y, width, height) {
+export function getPixels (element, x, y, width, height) {
 
-    var storedPixels = getStoredPixels(element, x, y, width, height);
-    var ee = getEnabledElement(element);
+  const storedPixels = getStoredPixels(element, x, y, width, height);
+  const ee = getEnabledElement(element);
 
-    var mlutfn = getModalityLUT(ee.image.slope, ee.image.intercept, ee.viewport.modalityLUT);
+  const mlutfn = getModalityLUT(ee.image.slope, ee.image.intercept, ee.viewport.modalityLUT);
 
-    var modalityPixels = storedPixels.map(mlutfn);
+  const modalityPixels = storedPixels.map(mlutfn);
 
-    return modalityPixels;
+  return modalityPixels;
 }

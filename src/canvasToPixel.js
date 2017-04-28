@@ -9,11 +9,13 @@ import { getTransform } from './internal/getTransform.js';
  *
  * @param element
  * @param pt
- * @returns {x: number, y: number}
+ * @returns {{x: Number, y: Number}}
  */
-export function canvasToPixel(element, pt) {
-    var enabledElement = getEnabledElement(element);
-    var transform = getTransform(enabledElement);
-    transform.invert();
-    return transform.transformPoint(pt.x, pt.y);
+export function canvasToPixel (element, pt) {
+  const enabledElement = getEnabledElement(element);
+  const transform = getTransform(enabledElement);
+
+  transform.invert();
+
+  return transform.transformPoint(pt.x, pt.y);
 }

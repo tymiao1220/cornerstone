@@ -5,10 +5,9 @@ import { updateImage } from './updateImage.js';
 /**
  * This module is responsible for enabling an element to display images with cornerstone
  */
-function setCanvasSize(element, canvas)
-{
-    // the device pixel ratio is 1.0 for normal displays and > 1.0
-    // for high DPI displays like Retina
+function setCanvasSize (element, canvas) {
+    // The device pixel ratio is 1.0 for normal displays and > 1.0
+    // For high DPI displays like Retina
     /*
 
     This functionality is disabled due to buggy behavior on systems with mixed DPI's.  If the canvas
@@ -28,31 +27,30 @@ function setCanvasSize(element, canvas)
     }
     */
 
-    canvas.width = element.clientWidth;
-    canvas.height = element.clientHeight;
-    canvas.style.width = element.clientWidth + "px";
-    canvas.style.height = element.clientHeight + "px";
+  canvas.width = element.clientWidth;
+  canvas.height = element.clientHeight;
+  canvas.style.width = `${element.clientWidth}px`;
+  canvas.style.height = `${element.clientHeight}px`;
 }
 
 /**
- * resizes an enabled element and optionally fits the image to window
+ * Resizes an enabled element and optionally fits the image to window
  * @param element
  * @param fitViewportToWindow true to refit, false to leave viewport parameters as they are
  */
-export function resize(element, fitViewportToWindow) {
+export function resize (element, fitViewportToWindow) {
 
-    var enabledElement = getEnabledElement(element);
+  const enabledElement = getEnabledElement(element);
 
-    setCanvasSize(element, enabledElement.canvas);
+  setCanvasSize(element, enabledElement.canvas);
 
-    if(enabledElement.image === undefined ) {
-        return;
-    }
+  if (enabledElement.image === undefined) {
+    return;
+  }
 
-    if(fitViewportToWindow === true) {
-        fitToWindow(element);
-    }
-    else {
-        updateImage(element);
-    }
+  if (fitViewportToWindow === true) {
+    fitToWindow(element);
+  } else {
+    updateImage(element);
+  }
 }

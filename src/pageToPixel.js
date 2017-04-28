@@ -13,22 +13,23 @@ import { getEnabledElement } from './enabledElements.js';
  * @param pageY
  * @returns {{x: number, y: number}}
  */
-export function pageToPixel(element, pageX, pageY) {
-    var enabledElement = getEnabledElement(element);
+export function pageToPixel (element, pageX, pageY) {
+  const enabledElement = getEnabledElement(element);
 
-    if(enabledElement.image === undefined) {
-        throw "image has not been loaded yet";
-    }
+  if (enabledElement.image === undefined) {
+    throw 'image has not been loaded yet';
+  }
 
-    var image = enabledElement.image;
+  // Convert the pageX and pageY to the canvas client coordinates
+  const rect = element.getBoundingClientRect();
+  const clientX = pageX - rect.left - window.pageXOffset;
+  const clientY = pageY - rect.top - window.pageYOffset;
 
-    // convert the pageX and pageY to the canvas client coordinates
-    var rect = element.getBoundingClientRect();
-    var clientX = pageX - rect.left - window.pageXOffset;
-    var clientY = pageY - rect.top - window.pageYOffset;
+  const pt = { x: clientX,
+    y: clientY };
+  const transform = getTransform(enabledElement);
 
-    var pt = {x: clientX, y: clientY};
-    var transform = getTransform(enabledElement);
-    transform.invert();
-    return transform.transformPoint(pt.x, pt.y);
+  transform.invert();
+
+  return transform.transformPoint(pt.x, pt.y);
 }

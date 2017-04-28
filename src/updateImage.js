@@ -8,12 +8,12 @@ import { drawImage } from './internal/drawImage.js';
  * Forces the image to be updated/redrawn for the specified enabled element
  * @param element
  */
-export function updateImage(element, invalidated) {
-    var enabledElement = getEnabledElement(element);
+export function updateImage (element, invalidated) {
+  const enabledElement = getEnabledElement(element);
 
-    if(enabledElement.image === undefined) {
-        throw "updateImage: image has not been loaded yet";
-    }
+  if (enabledElement.image === undefined) {
+    throw 'updateImage: image has not been loaded yet';
+  }
 
-    drawImage(enabledElement, invalidated);
+  drawImage(enabledElement, invalidated);
 }

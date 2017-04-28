@@ -5,66 +5,67 @@ import { generateLut } from '../internal/generateLut.js';
 import { storedPixelDataToCanvasImageData } from '../internal/storedPixelDataToCanvasImageData';
 import { setToPixelCoordinateSystem } from '../setToPixelCoordinateSystem';
 
-function initializeGrayscaleRenderCanvas(enabledElement, image)
-{
-    var grayscaleRenderCanvas = enabledElement.renderingTools.grayscaleRenderCanvas;
+function initializeGrayscaleRenderCanvas (enabledElement, image) {
+  const grayscaleRenderCanvas = enabledElement.renderingTools.grayscaleRenderCanvas;
     // Resize the canvas
-    grayscaleRenderCanvas.width = image.width;
-    grayscaleRenderCanvas.height = image.height;
+
+  grayscaleRenderCanvas.width = image.width;
+  grayscaleRenderCanvas.height = image.height;
 
     // NOTE - we need to fill the render canvas with white pixels since we control the luminance
-    // using the alpha channel to improve rendering performance.
-    var grayscaleRenderCanvasContext = grayscaleRenderCanvas.getContext('2d');
-    grayscaleRenderCanvasContext.fillStyle = 'white';
-    grayscaleRenderCanvasContext.fillRect(0,0, grayscaleRenderCanvas.width, grayscaleRenderCanvas.height);
-    var grayscaleRenderCanvasData = grayscaleRenderCanvasContext.getImageData(0,0,image.width, image.height);
-    
-    enabledElement.renderingTools.grayscaleRenderCanvasContext = grayscaleRenderCanvasContext;
-    enabledElement.renderingTools.grayscaleRenderCanvasData = grayscaleRenderCanvasData;
+    // Using the alpha channel to improve rendering performance.
+  const grayscaleRenderCanvasContext = grayscaleRenderCanvas.getContext('2d');
+
+  grayscaleRenderCanvasContext.fillStyle = 'white';
+  grayscaleRenderCanvasContext.fillRect(0, 0, grayscaleRenderCanvas.width, grayscaleRenderCanvas.height);
+  const grayscaleRenderCanvasData = grayscaleRenderCanvasContext.getImageData(0, 0, image.width, image.height);
+
+  enabledElement.renderingTools.grayscaleRenderCanvasContext = grayscaleRenderCanvasContext;
+  enabledElement.renderingTools.grayscaleRenderCanvasData = grayscaleRenderCanvasData;
 }
 
-function lutMatches(a, b) {
-  // if undefined, they are equal
-  if(!a && !b) {
+function lutMatches (a, b) {
+  // If undefined, they are equal
+  if (!a && !b) {
     return true;
   }
-  // if one is undefined, not equal
-  if(!a || !b) {
+  // If one is undefined, not equal
+  if (!a || !b) {
     return false;
   }
-  // check the unique ids
-  return (a.id === b.id)
+
+  // Check the unique ids
+  return (a.id === b.id);
 }
 
-function getLut(image, viewport, invalidated)
-{
-    // if we have a cached lut and it has the right values, return it immediately
-     if(image.cachedLut !== undefined &&
+function getLut (image, viewport, invalidated) {
+    // If we have a cached lut and it has the right values, return it immediately
+  if (image.cachedLut !== undefined &&
         image.cachedLut.windowCenter === viewport.voi.windowCenter &&
         image.cachedLut.windowWidth === viewport.voi.windowWidth &&
         lutMatches(image.cachedLut.modalityLUT, viewport.modalityLUT) &&
         lutMatches(image.cachedLut.voiLUT, viewport.voiLUT) &&
         image.cachedLut.invert === viewport.invert &&
         invalidated !== true) {
-        return image.cachedLut.lutArray;
-    }
-
-    // lut is invalid or not present, regenerate it and cache it
-    cornerstone.generateLut(image, viewport.voi.windowWidth, viewport.voi.windowCenter, viewport.invert, viewport.modalityLUT, viewport.voiLUT);
-    image.cachedLut.windowWidth = viewport.voi.windowWidth;
-    image.cachedLut.windowCenter = viewport.voi.windowCenter;
-    image.cachedLut.invert = viewport.invert;
-    image.cachedLut.voiLUT = viewport.voiLUT;
-    image.cachedLut.modalityLUT = viewport.modalityLUT;
     return image.cachedLut.lutArray;
+  }
+
+    // Lut is invalid or not present, regenerate it and cache it
+  generateLut(image, viewport.voi.windowWidth, viewport.voi.windowCenter, viewport.invert, viewport.modalityLUT, viewport.voiLUT);
+  image.cachedLut.windowWidth = viewport.voi.windowWidth;
+  image.cachedLut.windowCenter = viewport.voi.windowCenter;
+  image.cachedLut.invert = viewport.invert;
+  image.cachedLut.voiLUT = viewport.voiLUT;
+  image.cachedLut.modalityLUT = viewport.modalityLUT;
+
+  return image.cachedLut.lutArray;
 }
 
-function doesImageNeedToBeRendered(enabledElement, image)
-{
-    var lastRenderedImageId = enabledElement.renderingTools.lastRenderedImageId;
-    var lastRenderedViewport = enabledElement.renderingTools.lastRenderedViewport;
-    
-    if(image.imageId !== lastRenderedImageId ||
+function doesImageNeedToBeRendered (enabledElement, image) {
+  const lastRenderedImageId = enabledElement.renderingTools.lastRenderedImageId;
+  const lastRenderedViewport = enabledElement.renderingTools.lastRenderedViewport;
+
+  if (image.imageId !== lastRenderedImageId ||
         lastRenderedViewport.windowCenter !== enabledElement.viewport.voi.windowCenter ||
         lastRenderedViewport.windowWidth !== enabledElement.viewport.voi.windowWidth ||
         lastRenderedViewport.invert !== enabledElement.viewport.invert ||
@@ -73,50 +74,50 @@ function doesImageNeedToBeRendered(enabledElement, image)
         lastRenderedViewport.vflip !== enabledElement.viewport.vflip ||
         lastRenderedViewport.modalityLUT !== enabledElement.viewport.modalityLUT ||
         lastRenderedViewport.voiLUT !== enabledElement.viewport.voiLUT
-        )
-    {
-        return true;
-    }
+        ) {
+    return true;
+  }
 
-    return false;
+  return false;
 }
 
-function getRenderCanvas(enabledElement, image, invalidated)
-{
-    if (!enabledElement.renderingTools.grayscaleRenderCanvas) {
-        enabledElement.renderingTools.grayscaleRenderCanvas = document.createElement('canvas');
-    }
+function getRenderCanvas (enabledElement, image, invalidated) {
+  if (!enabledElement.renderingTools.grayscaleRenderCanvas) {
+    enabledElement.renderingTools.grayscaleRenderCanvas = document.createElement('canvas');
+  }
 
-    var grayscaleRenderCanvas = enabledElement.renderingTools.grayscaleRenderCanvas;
-    
-    // apply the lut to the stored pixel data onto the render canvas
+  const grayscaleRenderCanvas = enabledElement.renderingTools.grayscaleRenderCanvas;
 
-    if(doesImageNeedToBeRendered(enabledElement, image) === false && invalidated !== true) {
-        return grayscaleRenderCanvas;
-    }
+    // Apply the lut to the stored pixel data onto the render canvas
+
+  if (doesImageNeedToBeRendered(enabledElement, image) === false && invalidated !== true) {
+    return grayscaleRenderCanvas;
+  }
 
     // If our render canvas does not match the size of this image reset it
     // NOTE: This might be inefficient if we are updating multiple images of different
-    // sizes frequently.
-    if(grayscaleRenderCanvas.width !== image.width || grayscaleRenderCanvas.height !== image.height) {
-        initializeGrayscaleRenderCanvas(enabledElement, image);
-    }
+    // Sizes frequently.
+  if (grayscaleRenderCanvas.width !== image.width || grayscaleRenderCanvas.height !== image.height) {
+    initializeGrayscaleRenderCanvas(enabledElement, image);
+  }
 
-    // get the lut to use
-    var start = (window.performance ? performance.now() : Date.now());
-    var lut = getLut(image, enabledElement.viewport, invalidated);
-    image.stats.lastLutGenerateTime = (window.performance ? performance.now() : Date.now()) - start;
-    
-    var grayscaleRenderCanvasData = enabledElement.renderingTools.grayscaleRenderCanvasData;
-    var grayscaleRenderCanvasContext = enabledElement.renderingTools.grayscaleRenderCanvasContext;
-    // gray scale image - apply the lut and put the resulting image onto the render canvas
-    cornerstone.storedPixelDataToCanvasImageData(image, lut, grayscaleRenderCanvasData.data);
+    // Get the lut to use
+  let start = (window.performance ? performance.now() : Date.now());
+  const lut = getLut(image, enabledElement.viewport, invalidated);
 
-    start = (window.performance ? performance.now() : Date.now());
-    grayscaleRenderCanvasContext.putImageData(grayscaleRenderCanvasData, 0, 0);
-    image.stats.lastPutImageDataTime = (window.performance ? performance.now() : Date.now()) - start;
+  image.stats.lastLutGenerateTime = (window.performance ? performance.now() : Date.now()) - start;
 
-    return grayscaleRenderCanvas;
+  const grayscaleRenderCanvasData = enabledElement.renderingTools.grayscaleRenderCanvasData;
+  const grayscaleRenderCanvasContext = enabledElement.renderingTools.grayscaleRenderCanvasContext;
+    // Gray scale image - apply the lut and put the resulting image onto the render canvas
+
+  storedPixelDataToCanvasImageData(image, lut, grayscaleRenderCanvasData.data);
+
+  start = (window.performance ? performance.now() : Date.now());
+  grayscaleRenderCanvasContext.putImageData(grayscaleRenderCanvasData, 0, 0);
+  image.stats.lastPutImageDataTime = (window.performance ? performance.now() : Date.now()) - start;
+
+  return grayscaleRenderCanvas;
 }
 
 /**
@@ -124,65 +125,68 @@ function getRenderCanvas(enabledElement, image, invalidated)
  * @param enabledElement
  * @param invalidated - true if pixel data has been invaldiated and cached rendering should not be used
  */
-export function renderGrayscaleImage(enabledElement, invalidated) {
-    if (enabledElement === undefined) {
-        throw "drawImage: enabledElement parameter must not be undefined";
-    }
+export function renderGrayscaleImage (enabledElement, invalidated) {
+  if (enabledElement === undefined) {
+    throw 'drawImage: enabledElement parameter must not be undefined';
+  }
 
-    var image = enabledElement.image;
-    if (image === undefined) {
-        throw "drawImage: image must be loaded before it can be drawn";
-    }
+  const image = enabledElement.image;
 
-    // get the canvas context and reset the transform
-    var context = enabledElement.canvas.getContext('2d');
-    context.setTransform(1, 0, 0, 1, 0, 0);
+  if (image === undefined) {
+    throw 'drawImage: image must be loaded before it can be drawn';
+  }
 
-    // clear the canvas
-    context.fillStyle = 'black';
-    context.fillRect(0,0, enabledElement.canvas.width, enabledElement.canvas.height);
+    // Get the canvas context and reset the transform
+  const context = enabledElement.canvas.getContext('2d');
 
-    // turn off image smooth/interpolation if pixelReplication is set in the viewport
-    if(enabledElement.viewport.pixelReplication === true) {
-        context.imageSmoothingEnabled = false;
-        context.mozImageSmoothingEnabled = false; // firefox doesn't support imageSmoothingEnabled yet
-    }
-    else {
-        context.imageSmoothingEnabled = true;
-        context.mozImageSmoothingEnabled = true;
-    }
+  context.setTransform(1, 0, 0, 1, 0, 0);
 
-    // Save the canvas context state and apply the viewport properties
-    cornerstone.setToPixelCoordinateSystem(enabledElement, context);
+    // Clear the canvas
+  context.fillStyle = 'black';
+  context.fillRect(0, 0, enabledElement.canvas.width, enabledElement.canvas.height);
 
-    if (!enabledElement.renderingTools) {
-        enabledElement.renderingTools = {};
-    }
+    // Turn off image smooth/interpolation if pixelReplication is set in the viewport
+  if (enabledElement.viewport.pixelReplication === true) {
+    context.imageSmoothingEnabled = false;
+    context.mozImageSmoothingEnabled = false; // Firefox doesn't support imageSmoothingEnabled yet
+  } else {
+    context.imageSmoothingEnabled = true;
+    context.mozImageSmoothingEnabled = true;
+  }
 
-    var renderCanvas;
-    if (enabledElement.options && enabledElement.options.renderer &&
+  // Save the canvas context state and apply the viewport properties
+  setToPixelCoordinateSystem(enabledElement, context);
+
+  if (!enabledElement.renderingTools) {
+    enabledElement.renderingTools = {};
+  }
+
+  let renderCanvas;
+
+  if (enabledElement.options && enabledElement.options.renderer &&
         enabledElement.options.renderer.toLowerCase() === 'webgl') {
         // If this enabled element has the option set for WebGL, we should
-        // user it as our renderer.
-        renderCanvas = cornerstone.webGL.renderer.render(enabledElement);
-    } else {
+        // User it as our renderer.
+    renderCanvas = cornerstone.webGL.renderer.render(enabledElement);
+  } else {
         // If no options are set we will retrieve the renderCanvas through the
-        // normal Canvas rendering path
-        renderCanvas = getRenderCanvas(enabledElement, image, invalidated);
-    }
+        // Normal Canvas rendering path
+    renderCanvas = getRenderCanvas(enabledElement, image, invalidated);
+  }
 
     // Draw the render canvas half the image size (because we set origin to the middle of the canvas above)
-    context.drawImage(renderCanvas, 0,0, image.width, image.height, 0, 0, image.width, image.height);
+  context.drawImage(renderCanvas, 0, 0, image.width, image.height, 0, 0, image.width, image.height);
 
-    enabledElement.renderingTools.lastRenderedImageId = image.imageId;
-    var lastRenderedViewport = {};
-    lastRenderedViewport.windowCenter = enabledElement.viewport.voi.windowCenter;
-    lastRenderedViewport.windowWidth = enabledElement.viewport.voi.windowWidth;
-    lastRenderedViewport.invert = enabledElement.viewport.invert;
-    lastRenderedViewport.rotation = enabledElement.viewport.rotation;
-    lastRenderedViewport.hflip = enabledElement.viewport.hflip;
-    lastRenderedViewport.vflip = enabledElement.viewport.vflip;
-    lastRenderedViewport.modalityLUT = enabledElement.viewport.modalityLUT;
-    lastRenderedViewport.voiLUT = enabledElement.viewport.voiLUT;
-    enabledElement.renderingTools.lastRenderedViewport = lastRenderedViewport;
+  enabledElement.renderingTools.lastRenderedImageId = image.imageId;
+  const lastRenderedViewport = {};
+
+  lastRenderedViewport.windowCenter = enabledElement.viewport.voi.windowCenter;
+  lastRenderedViewport.windowWidth = enabledElement.viewport.voi.windowWidth;
+  lastRenderedViewport.invert = enabledElement.viewport.invert;
+  lastRenderedViewport.rotation = enabledElement.viewport.rotation;
+  lastRenderedViewport.hflip = enabledElement.viewport.hflip;
+  lastRenderedViewport.vflip = enabledElement.viewport.vflip;
+  lastRenderedViewport.modalityLUT = enabledElement.viewport.modalityLUT;
+  lastRenderedViewport.voiLUT = enabledElement.viewport.voiLUT;
+  enabledElement.renderingTools.lastRenderedViewport = lastRenderedViewport;
 }

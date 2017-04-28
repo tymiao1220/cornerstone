@@ -2,37 +2,39 @@
  * This module generates a Modality LUT
  */
 
-function generateLinearModalityLUT(slope, intercept) {
-  var localSlope = slope;
-  var localIntercept = intercept;
-  return function(sp) {
+function generateLinearModalityLUT (slope, intercept) {
+  const localSlope = slope;
+  const localIntercept = intercept;
+
+
+  return function (sp) {
     return sp * localSlope + localIntercept;
-  }
+  };
 }
 
-function generateNonLinearModalityLUT(modalityLUT) {
-  var minValue = modalityLUT.lut[0];
-  var maxValue = modalityLUT.lut[modalityLUT.lut.length -1];
-  var maxValueMapped = modalityLUT.firstValueMapped + modalityLUT.lut.length;
-  return function(sp) {
-    if(sp < modalityLUT.firstValueMapped) {
+function generateNonLinearModalityLUT (modalityLUT) {
+  const minValue = modalityLUT.lut[0];
+  const maxValue = modalityLUT.lut[modalityLUT.lut.length - 1];
+  const maxValueMapped = modalityLUT.firstValueMapped + modalityLUT.lut.length;
+
+
+  return function (sp) {
+    if (sp < modalityLUT.firstValueMapped) {
       return minValue;
-    }
-    else if(sp >= maxValueMapped)
-    {
+    } else if (sp >= maxValueMapped) {
       return maxValue;
     }
-    else
-    {
-      return modalityLUT.lut[sp];
-    }
-  }
+
+    return modalityLUT.lut[sp];
+
+  };
 }
 
-export function getModalityLUT(slope, intercept, modalityLUT) {
+export function getModalityLUT (slope, intercept, modalityLUT) {
   if (modalityLUT) {
     return generateNonLinearModalityLUT(modalityLUT);
-  } else {
-    return generateLinearModalityLUT(slope, intercept);
   }
+
+  return generateLinearModalityLUT(slope, intercept);
+
 }

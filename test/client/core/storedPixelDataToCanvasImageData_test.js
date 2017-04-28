@@ -1,8 +1,9 @@
+import { assert } from 'chai';
 
-(function(csc) {
-    QUnit.module("cornerstoneCore.storedPixelDataToCanvasImageData");
+import { storedPixelDataToCanvasImageData } from '../../../src/internal/storedPixelDataToCanvasImageData';
 
-    QUnit.test("storedPixelDataToCanvasImageData minPixel = 0", function(assert) {
+describe('storedPixelDataToCanvasImageData', function() {
+    it("storedPixelDataToCanvasImageData minPixel = 0", function() {
         // Arrange
         var lut = [0,255];
         var canvasImageDataData = [255,255,255,128, 255,255,255,128];
@@ -16,7 +17,7 @@
         };
 
         // Act
-        csc.storedPixelDataToCanvasImageData(image, lut, canvasImageDataData);
+        storedPixelDataToCanvasImageData(image, lut, canvasImageDataData);
 
         // Assert
         assert.equal(canvasImageDataData[0], 255, "R1");
@@ -29,7 +30,7 @@
         assert.equal(canvasImageDataData[7], 255, "A2");
     });
 
-    QUnit.test("storedPixelDataToCanvasImageData minPixel < 0", function(assert) {
+    it("storedPixelDataToCanvasImageData minPixel < 0", function() {
         // Arrange
         var lut = [0,255];
         var canvasImageDataData = [255,255,255,128, 255,255,255,128];
@@ -43,7 +44,7 @@
         };
 
         // Act
-        csc.storedPixelDataToCanvasImageData(image, lut, canvasImageDataData);
+        storedPixelDataToCanvasImageData(image, lut, canvasImageDataData);
 
         // Assert
         assert.equal(canvasImageDataData[0], 255, "R1");
@@ -56,7 +57,7 @@
         assert.equal(canvasImageDataData[7], 255, "A2");
     });
 
-    QUnit.test("storedPixelDataToCanvasImageData minPixel > 0", function(assert) {
+    it("storedPixelDataToCanvasImageData minPixel > 0", function() {
         // Arrange
         var lut = [];
         lut[1] = 0;
@@ -72,7 +73,7 @@
         };
 
         // Act
-        csc.storedPixelDataToCanvasImageData(image, lut, canvasImageDataData);
+        storedPixelDataToCanvasImageData(image, lut, canvasImageDataData);
 
         // Assert
         assert.equal(canvasImageDataData[0], 255, "R1");
@@ -84,5 +85,4 @@
         assert.equal(canvasImageDataData[6], 255, "B2");
         assert.equal(canvasImageDataData[7], 255, "A2");
     });
-
-})(cornerstone);
+});

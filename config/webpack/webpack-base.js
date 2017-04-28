@@ -8,9 +8,7 @@ const bannerPlugin = require('./plugins/banner');
 module.exports = {
   context: context,
   entry: {
-    cornerstoneWADOImageLoader: './imageLoader/index.js'
-    // cornerstoneWADOImageLoaderWebWorker: './webWorker/index.js',
-    // cornerstoneWADOImageLoaderCodecs: './codecs/index.js'
+    cornerstone: './index.js'
   },
   target: 'web',
   output: {
@@ -29,14 +27,14 @@ module.exports = {
     rules: [{
       enforce: 'pre',
       test: /\.js$/,
-      exclude: /(node_modules|bower_components)/,
+      exclude: /(node_modules)/,
       loader: 'eslint-loader',
       options: {
-        failOnError: true
+        failOnError: false
       }
     }, {
       test: /\.js$/,
-      exclude: /(node_modules|bower_components)/,
+      exclude: /(node_modules)/,
       use: [{
         loader: 'babel-loader'
       }]

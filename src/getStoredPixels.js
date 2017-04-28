@@ -13,22 +13,25 @@ import { getEnabledElement } from './enabledElements.js';
  * @param height
  * @returns {Array}
  */
-export function getStoredPixels(element, x, y, width, height) {
-    if(element === undefined) {
-        throw "getStoredPixels: parameter element must not be undefined";
-    }
+export function getStoredPixels (element, x, y, width, height) {
+  if (element === undefined) {
+    throw 'getStoredPixels: parameter element must not be undefined';
+  }
 
-    x = Math.round(x);
-    y = Math.round(y);
-    var ee = getEnabledElement(element);
-    var storedPixels = [];
-    var index = 0;
-    var pixelData = ee.image.getPixelData();
-    for(var row=0; row < height; row++) {
-        for(var column=0; column < width; column++) {
-            var spIndex = ((row + y) * ee.image.columns) + (column + x);
-            storedPixels[index++] = pixelData[spIndex];
-        }
+  x = Math.round(x);
+  y = Math.round(y);
+  const ee = getEnabledElement(element);
+  const storedPixels = [];
+  let index = 0;
+  const pixelData = ee.image.getPixelData();
+
+  for (let row = 0; row < height; row++) {
+    for (let column = 0; column < width; column++) {
+      const spIndex = ((row + y) * ee.image.columns) + (column + x);
+
+      storedPixels[index++] = pixelData[spIndex];
     }
-    return storedPixels;
+  }
+
+  return storedPixels;
 }

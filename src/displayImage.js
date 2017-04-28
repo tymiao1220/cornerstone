@@ -7,55 +7,57 @@ import { getDefaultViewport } from './internal/getDefaultViewport.js';
 import { updateImage } from './updateImage.js';
 
 /**
- * sets a new image object for a given element
+ * Sets a new image object for a given element
  * @param element
  * @param image
  */
-export function displayImage(element, image, viewport) {
-    if(element === undefined) {
-        throw "displayImage: parameter element cannot be undefined";
+export function displayImage (element, image, viewport) {
+  if (element === undefined) {
+    throw 'displayImage: parameter element cannot be undefined';
+  }
+  if (image === undefined) {
+    throw 'displayImage: parameter image cannot be undefined';
+  }
+
+  const enabledElement = getEnabledElement(element);
+
+  enabledElement.image = image;
+
+  if (enabledElement.viewport === undefined) {
+    enabledElement.viewport = getDefaultViewport(enabledElement.canvas, image);
+  }
+
+    // Merge viewport
+  if (viewport) {
+    for (const attrname in viewport) {
+      if (viewport[attrname] !== null) {
+        enabledElement.viewport[attrname] = viewport[attrname];
+      }
     }
-    if(image === undefined) {
-        throw "displayImage: parameter image cannot be undefined";
-    }
+  }
 
-    var enabledElement = getEnabledElement(element);
+  const now = new Date();
+  let frameRate;
 
-    enabledElement.image = image;
+  if (enabledElement.lastImageTimeStamp !== undefined) {
+    const timeSinceLastImage = now.getTime() - enabledElement.lastImageTimeStamp;
 
-    if(enabledElement.viewport === undefined) {
-        enabledElement.viewport = getDefaultViewport(enabledElement.canvas, image);
-    }
+    frameRate = (1000 / timeSinceLastImage).toFixed();
+  }
 
-    // merge viewport
-    if(viewport) {
-        for(var attrname in viewport)
-        {
-            if(viewport[attrname] !== null) {
-                enabledElement.viewport[attrname] = viewport[attrname];
-            }
-        }
-    }
+  enabledElement.lastImageTimeStamp = now.getTime();
 
-    var now = new Date();
-    var frameRate;
-    if(enabledElement.lastImageTimeStamp !== undefined) {
-        var timeSinceLastImage = now.getTime() - enabledElement.lastImageTimeStamp;
-        frameRate = (1000 / timeSinceLastImage).toFixed();
-    }
-    
-    enabledElement.lastImageTimeStamp = now.getTime();
+  const newImageEventData = {
+    viewport: enabledElement.viewport,
+    element: enabledElement.element,
+    image: enabledElement.image,
+    enabledElement,
+    frameRate
+  };
 
-    var newImageEventData = {
-        viewport : enabledElement.viewport,
-        element : enabledElement.element,
-        image : enabledElement.image,
-        enabledElement : enabledElement,
-        frameRate : frameRate
-    };
+  const event = new CustomEvent('CornerstoneNewImage', { detail: newImageEventData });
 
-    var event = new CustomEvent("CornerstoneNewImage", {detail: newImageEventData});
-    enabledElement.element.dispatchEvent(event);
+  enabledElement.element.dispatchEvent(event);
 
-    updateImage(element);
+  updateImage(element);
 }

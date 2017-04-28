@@ -1,4 +1,4 @@
-// internal (some of these are from old internal/legacy.js expose)
+// Internal (some of these are from old internal/legacy.js expose)
 export { drawImage } from './internal/drawImage.js';
 export { generateLut, generateLutNew } from './internal/generateLut.js';
 export { getDefaultViewport } from './internal/getDefaultViewport.js';
@@ -10,16 +10,10 @@ export {
   storedColorPixelDataToCanvasImageData
 } from './internal/storedColorPixelDataToCanvasImageData.js';
 
-// rendering
-import { renderColorImage } from './rendering/renderColorImage.js';
-import { renderGrayscaleImage } from './rendering/renderGrayscaleImage.js';
-import { renderWebImage } from './rendering/renderWebImage.js';
-export { renderColorImage, renderGrayscaleImage, renderWebImage };
-export const rendering = {
-  colorImage: renderColorImage,
-  grayscaleImage: renderGrayscaleImage,
-  webImage: renderWebImage,
-};
+// Rendering
+export { renderColorImage } from './rendering/renderColorImage.js';
+export { renderGrayscaleImage } from './rendering/renderGrayscaleImage.js';
+export { renderWebImage } from './rendering/renderWebImage.js';
 
 export { addEventListener, dispatchEvent } from './addEventListener.js';
 export { canvasToPixel } from './canvasToPixel.js';
@@ -47,6 +41,7 @@ export {
   registerImageLoader,
   registerUnknownImageLoader
 } from './imageLoader.js';
+
 export { invalidate } from './invalidate.js';
 export { invalidateImageId } from './invalidateImageId.js';
 export { pageToPixel } from './pageToPixel.js';
@@ -57,23 +52,8 @@ export { setToPixelCoordinateSystem } from './setToPixelCoordinateSystem.js';
 export { setViewport } from './setViewport.js';
 export { updateImage } from './updateImage.js';
 
-// funky exports, same api as before es6
-import {
-  imageCache as imageCacheDict, cachedImages, setMaximumSizeBytes, putImagePromise,
-  getImagePromise, removeImagePromise, getCacheInfo, purgeCache,
-  changeImageIdCacheSize,
-} from './imageCache.js';
-export const imageCache = {
-  imageCache: imageCacheDict, cachedImages, setMaximumSizeBytes, putImagePromise,
-  getImagePromise, removeImagePromise, getCacheInfo, purgeCache,
-  changeImageIdCacheSize
-};
-import { addProvider, removeProvider, get } from './metaData.js';
-export const metaData = { addProvider, removeProvider, get };
-
+export { rendering } from './rendering/index';
+export { imageCache } from './imageCache.js';
+export { metaData } from './metaData.js';
 export { webGL } from './webgl/index.js';
-
-import { getColormap, getColormapsList } from './colors/colormap';
-import { LookupTable } from './colors/lookupTable';
-
-export const colors = { getColormap, getColormapsList, LookupTable };
+export { colors } from './colors/index.js';

@@ -1,26 +1,26 @@
-// this module defines a way to access various metadata about an imageId.  This layer of abstraction exists
-// so metadata can be provided in different ways (e.g. by parsing DICOM P10 or by a WADO-RS document)
+// This module defines a way to access various metadata about an imageId.  This layer of abstraction exists
+// So metadata can be provided in different ways (e.g. by parsing DICOM P10 or by a WADO-RS document)
 
-var providers = [];
+const providers = [];
 
 /**
  * Adds a metadata provider with the specified priority
  * @param provider
  * @param priority - 0 is default/normal, > 0 is high, < 0 is low
  */
-export function addProvider(provider, priority) {
-  priority = priority || 0; // default priority
-  // find the right spot to insert this provider based on priority
-  for(var i=0; i < providers.length; i++) {
-    if(providers[i].priority <= priority) {
+export function addProvider (provider, priority) {
+  priority = priority || 0; // Default priority
+  // Find the right spot to insert this provider based on priority
+  for (var i = 0; i < providers.length; i++) {
+    if (providers[i].priority <= priority) {
       break;
     }
   }
 
-  // insert the decode task at position i
+  // Insert the decode task at position i
   providers.splice(i, 0, {
-    priority: priority,
-    provider: provider
+    priority,
+    provider
   });
 
 }
@@ -29,10 +29,11 @@ export function addProvider(provider, priority) {
  * Removes the specified provider
  * @param provider
  */
-export function removeProvider( provider) {
-  for(var i=0; i < providers.length; i++) {
-    if(providers[i].provider === provider) {
+export function removeProvider (provider) {
+  for (let i = 0; i < providers.length; i++) {
+    if (providers[i].provider === provider) {
       providers.splice(i, 1);
+
       return;
     }
   }
@@ -46,14 +47,21 @@ export function removeProvider( provider) {
  * @param imageId
  * @returns {boolean}
  */
-export function getMetaData(type, imageId) {
-  // invoke each provider in priority order until one returns something
-  for(var i=0; i < providers.length; i++) {
+export function getMetaData (type, imageId) {
+  // Invoke each provider in priority order until one returns something
+  for (let i = 0; i < providers.length; i++) {
     var result;
+
     result = providers[i].provider(type, imageId);
     if (result !== undefined) {
       return result;
     }
   }
 }
-export const get = getMetaData; // api compatibility
+export const get = getMetaData; // Api compatibility
+
+export const metaData = {
+  addProvider,
+  removeProvider,
+  get: getMetaData
+};

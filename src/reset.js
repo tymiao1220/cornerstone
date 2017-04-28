@@ -7,10 +7,10 @@ import { updateImage } from './updateImage.js';
  *
  * @param element
  */
-export function reset(element)
-{
-  var enabledElement = getEnabledElement(element);
-  var defaultViewport = getDefaultViewport(enabledElement.canvas, enabledElement.image);
+export function reset (element) {
+  const enabledElement = getEnabledElement(element);
+  const defaultViewport = getDefaultViewport(enabledElement.canvas, enabledElement.image);
+
   enabledElement.viewport = defaultViewport;
   updateImage(element);
 }

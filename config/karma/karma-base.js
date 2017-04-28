@@ -9,7 +9,10 @@ delete webpackConfig.output.library;
 webpackConfig.module.rules.push({
   test: /\.js$/,
   include: path.resolve('./src/'),
-  loader: 'istanbul-instrumenter-loader'
+  loader: 'istanbul-instrumenter-loader',
+  query: {
+    esModules: true
+  }
 });
 
 module.exports = {
@@ -44,11 +47,6 @@ module.exports = {
       timings: false,
       errorDetails: true
     }
-  },
-
-  sauceLabs: {
-    startConnect: true,
-    testName: 'Cornerstone WADO Image Loader'
   },
 
   coverageReporter: {

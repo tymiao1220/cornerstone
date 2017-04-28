@@ -1,55 +1,58 @@
 import { Transform } from './transform.js';
 
-export function calculateTransform(enabledElement, scale) {
+export function calculateTransform (enabledElement, scale) {
 
-    var transform = new Transform();
-    transform.translate(enabledElement.canvas.width/2, enabledElement.canvas.height / 2);
+  const transform = new Transform();
 
-    //Apply the rotation before scaling for non square pixels
-    var angle = enabledElement.viewport.rotation;
-    if(angle!==0) {
-        transform.rotate(angle*Math.PI/180);
-    }
+  transform.translate(enabledElement.canvas.width / 2, enabledElement.canvas.height / 2);
 
-    // apply the scale
-    var widthScale = enabledElement.viewport.scale;
-    var heightScale = enabledElement.viewport.scale;
-    if(enabledElement.image.rowPixelSpacing < enabledElement.image.columnPixelSpacing) {
-        widthScale = widthScale * (enabledElement.image.columnPixelSpacing / enabledElement.image.rowPixelSpacing);
-    }
-    else if(enabledElement.image.columnPixelSpacing < enabledElement.image.rowPixelSpacing) {
-        heightScale = heightScale * (enabledElement.image.rowPixelSpacing / enabledElement.image.columnPixelSpacing);
-    }
-    transform.scale(widthScale, heightScale);
+    // Apply the rotation before scaling for non square pixels
+  const angle = enabledElement.viewport.rotation;
 
-    // unrotate to so we can translate unrotated
-    if(angle!==0) {
-        transform.rotate(-angle*Math.PI/180);
-    }
+  if (angle !== 0) {
+    transform.rotate(angle * Math.PI / 180);
+  }
 
-    // apply the pan offset
-    transform.translate(enabledElement.viewport.translation.x, enabledElement.viewport.translation.y);
+    // Apply the scale
+  let widthScale = enabledElement.viewport.scale;
+  let heightScale = enabledElement.viewport.scale;
 
-    // rotate again so we can apply general scale
-    if(angle!==0) {
-        transform.rotate(angle*Math.PI/180);
-    }
+  if (enabledElement.image.rowPixelSpacing < enabledElement.image.columnPixelSpacing) {
+    widthScale *= (enabledElement.image.columnPixelSpacing / enabledElement.image.rowPixelSpacing);
+  } else if (enabledElement.image.columnPixelSpacing < enabledElement.image.rowPixelSpacing) {
+    heightScale *= (enabledElement.image.rowPixelSpacing / enabledElement.image.columnPixelSpacing);
+  }
+  transform.scale(widthScale, heightScale);
 
-    if(scale !== undefined) {
-        // apply the font scale
-        transform.scale(scale, scale);
-    }
+    // Unrotate to so we can translate unrotated
+  if (angle !== 0) {
+    transform.rotate(-angle * Math.PI / 180);
+  }
 
-    //Apply Flip if required
-    if(enabledElement.viewport.hflip) {
-        transform.scale(-1,1);
-    }
+    // Apply the pan offset
+  transform.translate(enabledElement.viewport.translation.x, enabledElement.viewport.translation.y);
 
-    if(enabledElement.viewport.vflip) {
-        transform.scale(1,-1);
-    }
+    // Rotate again so we can apply general scale
+  if (angle !== 0) {
+    transform.rotate(angle * Math.PI / 180);
+  }
 
-    // translate the origin back to the corner of the image so the event handlers can draw in image coordinate system
-    transform.translate(-enabledElement.image.width / 2 , -enabledElement.image.height/ 2);
-    return transform;
+  if (scale !== undefined) {
+        // Apply the font scale
+    transform.scale(scale, scale);
+  }
+
+    // Apply Flip if required
+  if (enabledElement.viewport.hflip) {
+    transform.scale(-1, 1);
+  }
+
+  if (enabledElement.viewport.vflip) {
+    transform.scale(1, -1);
+  }
+
+    // Translate the origin back to the corner of the image so the event handlers can draw in image coordinate system
+  transform.translate(-enabledElement.image.width / 2, -enabledElement.image.height / 2);
+
+  return transform;
 }

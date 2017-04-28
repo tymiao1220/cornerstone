@@ -7,10 +7,12 @@ import { getEnabledElement } from './enabledElements.js';
  * side effects that come from scaling and non square pixels
  * @param element
  * @param pt
- * @returns {x: number, y: number}
+ * @returns {{x: Number, y: Number}}
  */
-export function pixelToCanvas(element, pt) {
-    var enabledElement = getEnabledElement(element);
-    var transform = getTransform(enabledElement);
-    return transform.transformPoint(pt.x, pt.y);
+export function pixelToCanvas (element, pt) {
+  const enabledElement = getEnabledElement(element);
+  const transform = getTransform(enabledElement);
+
+
+  return transform.transformPoint(pt.x, pt.y);
 }

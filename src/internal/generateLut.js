@@ -5,37 +5,34 @@
 import { getModalityLUT } from './modalityLUT.js';
 import { getVOILUT } from './voiLUT.js';
 
-export function generateLutNew(image, windowWidth, windowCenter, invert, modalityLUT, voiLUT)
-  {
-    if(image.cachedLut === undefined) {
-      image.cachedLut = {};
-      image.cachedLut.lutArray = new Uint8ClampedArray(image.maxPixelValue - Math.min(image.minPixelValue,0)+1);
-    }
-    var lut = image.cachedLut.lutArray;
-    var maxPixelValue = image.maxPixelValue;
-    var minPixelValue = image.minPixelValue;
+export function generateLutNew (image, windowWidth, windowCenter, invert, modalityLUT, voiLUT) {
+  if (image.cachedLut === undefined) {
+    image.cachedLut = {};
+    image.cachedLut.lutArray = new Uint8ClampedArray(image.maxPixelValue - Math.min(image.minPixelValue, 0) + 1);
+  }
+  const lut = image.cachedLut.lutArray;
+  const maxPixelValue = image.maxPixelValue;
+  const minPixelValue = image.minPixelValue;
 
-    var mlutfn = getModalityLUT(image.slope, image.intercept, modalityLUT);
-    var vlutfn = getVOILUT(windowWidth, windowCenter, voiLUT);
+  const mlutfn = getModalityLUT(image.slope, image.intercept, modalityLUT);
+  const vlutfn = getVOILUT(windowWidth, windowCenter, voiLUT);
 
-    var offset = 0;
-    if(minPixelValue < 0) {
-      offset = minPixelValue;
-    }
-    var storedValue;
-    var modalityLutValue;
-    var voiLutValue;
-    var clampedValue;
+  let offset = 0;
 
-    for(storedValue = image.minPixelValue; storedValue <= maxPixelValue; storedValue++)
-    {
-      if(!invert) {
-        lut[storedValue + (-offset)] = vlutfn(mlutfn(storedValue));
-      } else {
-        lut[storedValue + (-offset)] = 255 - vlutfn(mlutfn(storedValue));
-      }
+  if (minPixelValue < 0) {
+    offset = minPixelValue;
+  }
+  let storedValue;
+
+  for (storedValue = image.minPixelValue; storedValue <= maxPixelValue; storedValue++) {
+    if (invert) {
+      lut[storedValue + (-offset)] = 255 - vlutfn(mlutfn(storedValue));
+    } else {
+      lut[storedValue + (-offset)] = vlutfn(mlutfn(storedValue));
     }
-    return lut;
+  }
+
+  return lut;
 }
 
 /**
@@ -45,53 +42,51 @@ export function generateLutNew(image, windowWidth, windowCenter, invert, modalit
  * @param image
  * @returns {Array}
  */
-export function generateLut(image, windowWidth, windowCenter, invert, modalityLUT, voiLUT)
-{
-  if(modalityLUT || voiLUT) {
+export function generateLut (image, windowWidth, windowCenter, invert, modalityLUT, voiLUT) {
+  if (modalityLUT || voiLUT) {
     return generateLutNew(image, windowWidth, windowCenter, invert, modalityLUT, voiLUT);
   }
 
-  if(image.cachedLut === undefined) {
+  if (image.cachedLut === undefined) {
     image.cachedLut = {};
-    image.cachedLut.lutArray = new Uint8ClampedArray(image.maxPixelValue - Math.min(image.minPixelValue,0)+1);
+    image.cachedLut.lutArray = new Uint8ClampedArray(image.maxPixelValue - Math.min(image.minPixelValue, 0) + 1);
   }
-  var lut = image.cachedLut.lutArray;
+  const lut = image.cachedLut.lutArray;
 
-  var maxPixelValue = image.maxPixelValue;
-  var minPixelValue = image.minPixelValue;
-  var slope = image.slope;
-  var intercept = image.intercept;
-  var localWindowWidth = windowWidth;
-  var localWindowCenter = windowCenter;
-  var modalityLutValue;
-  var voiLutValue;
-  var clampedValue;
-  var storedValue;
+  const maxPixelValue = image.maxPixelValue;
+  const minPixelValue = image.minPixelValue;
+  const slope = image.slope;
+  const intercept = image.intercept;
+  const localWindowWidth = windowWidth;
+  const localWindowCenter = windowCenter;
+  let modalityLutValue;
+  let voiLutValue;
+  let storedValue;
 
   // NOTE: As of Nov 2014, most javascript engines have lower performance when indexing negative indexes.
   // We improve performance by offsetting the pixel values for signed data to avoid negative indexes
-  // when generating the lut and then undo it in storedPixelDataToCanvasImagedata.  Thanks to @jpambrun
-  // for this contribution!
+  // When generating the lut and then undo it in storedPixelDataToCanvasImagedata.  Thanks to @jpambrun
+  // For this contribution!
 
-  var offset = 0;
-  if(minPixelValue < 0) {
+  let offset = 0;
+
+  if (minPixelValue < 0) {
     offset = minPixelValue;
   }
 
-  if(invert === true) {
-    for(storedValue = image.minPixelValue; storedValue <= maxPixelValue; storedValue++)
-    {
-      modalityLutValue =  storedValue * slope + intercept;
+  if (invert === true) {
+    for (storedValue = image.minPixelValue; storedValue <= maxPixelValue; storedValue++) {
+      modalityLutValue = storedValue * slope + intercept;
+      voiLutValue = (((modalityLutValue - (localWindowCenter)) / (localWindowWidth) + 0.5) * 255.0);
+      lut[storedValue + (-offset)] = voiLutValue;
+    }
+  } else {
+    for (storedValue = image.minPixelValue; storedValue <= maxPixelValue; storedValue++) {
+      modalityLutValue = storedValue * slope + intercept;
       voiLutValue = (((modalityLutValue - (localWindowCenter)) / (localWindowWidth) + 0.5) * 255.0);
       lut[storedValue + (-offset)] = voiLutValue;
     }
   }
-  else {
-    for(storedValue = image.minPixelValue; storedValue <= maxPixelValue; storedValue++)
-    {
-      modalityLutValue = storedValue * slope + intercept;
-      voiLutValue = (((modalityLutValue - (localWindowCenter)) / (localWindowWidth) + 0.5) * 255.0);
-      lut[storedValue+ (-offset)] = voiLutValue;
-    }
-  }
+
+  return lut;
 }

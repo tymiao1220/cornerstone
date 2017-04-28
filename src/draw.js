@@ -10,12 +10,12 @@ import { drawImage } from './internal/drawImage.js';
  *
  * @param element
  */
-export function draw(element) {
-    var enabledElement = getEnabledElement(element);
+export function draw (element) {
+  const enabledElement = getEnabledElement(element);
 
-    if(enabledElement.image === undefined) {
-        throw "draw: image has not been loaded yet";
-    }
+  if (enabledElement.image === undefined) {
+    throw 'draw: image has not been loaded yet';
+  }
 
-    drawImage(enabledElement);
+  drawImage(enabledElement);
 }
