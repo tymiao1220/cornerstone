@@ -44,13 +44,16 @@ function purgeCacheIfNecessary () {
     cacheSizeInBytes -= lastCachedImage.sizeInBytes;
     delete imageCache[lastCachedImage.imageId];
     cachedImages.pop();
-    $(cornerstone).trigger('CornerstoneWebGLTextureRemoved', { imageId: lastCachedImage.imageId });
+    const eventData = { imageId: lastCachedImage.imageId };
+    const event = new CustomEvent('CornerstoneWebGLTextureRemoved', { detail: eventData });
+
+    cornerstone.dispatchEvent(event);
   }
 
   const cacheInfo = getCacheInfo();
+  const event = new CustomEvent('CornerstoneWebGLTextureCacheFull', { detail: cacheInfo });
 
-  console.log('CornerstoneWebGLTextureCacheFull');
-  $(cornerstone).trigger('CornerstoneWebGLTextureCacheFull', cacheInfo);
+  cornerstone.dispatchEvent(event);
 }
 
 export function setMaximumSizeBytes (numBytes) {
