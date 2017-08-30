@@ -84,7 +84,7 @@ export function addLayer (element, image, options) {
 
   // Override the defaults if any optional viewport settings
   // have been specified
-  if (options.viewport) {
+  if (options && options.viewport) {
     viewport = Object.assign(viewport, options.viewport);
   }
 
