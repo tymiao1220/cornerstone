@@ -139,8 +139,9 @@ export function renderColorImage (enabledElement, invalidated) {
   context.setTransform(1, 0, 0, 1, 0, 0);
 
     // Clear the canvas
-  context.fillStyle = 'black';
-  context.fillRect(0, 0, enabledElement.canvas.width, enabledElement.canvas.height);
+  context.clearRect(0, 0, enabledElement.canvas.width, enabledElement.canvas.height);
+  context.fillStyle = 'rgba(0,0,0,0)';
+  context.fillRect(0,0, enabledElement.canvas.width, enabledElement.canvas.height);
 
     // Turn off image smooth/interpolation if pixelReplication is set in the viewport
   if (enabledElement.viewport.pixelReplication === true) {
