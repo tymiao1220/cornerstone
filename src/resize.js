@@ -33,8 +33,9 @@ function setCanvasSize (element, canvas) {
 
   canvas.width = element.clientWidth;
   canvas.height = element.clientHeight;
-  canvas.style.width = `${element.clientWidth}px`;
-  canvas.style.height = `${element.clientHeight}px`;
+//Change size along with browsor size
+  canvas.style.width = `100%`;
+  canvas.style.height = `100%`;
 }
 
 /**
